@@ -1,0 +1,98 @@
+\documentclass[12pt]{article}
+\usepackage[paperheight=11.5in,paperwidth=8.5in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{version}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}%
+\usepackage{fancyhdr}
+\usepackage{pgfplots}
+\includeversion{question}\includeversion{solution}
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{finalremark}[theorem]{Final Remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+\textwidth6.3in
+
+\setlength{\topmargin}{0in} \addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+
+\setlength{\oddsidemargin}{0in}
+
+\oddsidemargin  0.0in \evensidemargin 0.0in
+
+\pagestyle{fancy}\lhead{CS598} \rhead{13 November 2013}
+\chead{{\large{\bf Dhashrath Raguraman} (raguram2)}} 
+
+
+\begin{document}
+\centerline {{\bf CS598 AITR Assignment 5 }}
+\begin{solution}
+ {\bf MapReduce programming and word association discovery } \\
+\begin{itemize}
+
+\item Code written and tested on Single Node Hadoop Cluster set up on OSX
+\item API Version: 1.2.1  (this is different from the altocumulus box which has 0.19)
+\item Java Files : wordCount.java , pairCount.java , mutualinformation.java
+
+\item Data Set	: Running on a 4000 line pruned data set of apsrc.txt
+
+\item Expected Outputs: wc.dat (wordcount) ,wpc.dat(wordpaircount) and mutualinfo.txt(file containing result)
+
+\item {\bf Where can you find the outputs}: (hadoop relative) /home/raguram2/
+\begin{verbatim}
+hadoop fs -ls /home/raguram2
+\end{verbatim}
+
+{\bf Where can you find the code}: (linux default home path) /home/raguram2/
+\end{itemize}
+
+{ \bf Steps in running code}
+\begin{itemize}
+\item {\bf Step 1}
+\newline Generate Pruned data set using head -4000  apsrc.txt 
+\item {\bf Step 2}
+\newline Generate jar using hadoop libraries  
+\begin{verbatim}
+javac -classpath /usr/local/Cellar/hadoop/1.2.1/libexec/lib/commons-cli-1.2.jar:
+/usr/local/Cellar/hadoop/1.2.1/libexec/hadoop-core-1.2.1.jar  -d 
+miclasses *.java && jar -cvf mi.jar -C miclasses/ .
+\end{verbatim}
+\item {\bf Step 3}
+\newline Use the wordCount class that uses map reduce and derive counts on occurence in total documents and total number of occurrences.Word Counts go into "wc/" folder .You can find the wc.dat file used in my hadoop relative path /home/raguram2/wc.dat
+\begin{verbatim}
+hadoop jar mi.jar wordCount apsrc_4k.txt wc
+\end{verbatim}
+
+\item {\bf Step 4}
+\newline Use the pairCount class that uses map reduce and derive pair counts. Pair Counts go into wpc/ folder .You can find the wpc.dat file used in my hadoop relative path /home/raguram2/wpc.dat
+\begin{verbatim}
+hadoop jar mi.jar pairCount apsrc_4k.txt wpc
+\end{verbatim}
+\item {\bf Step 5}
+\newline Use the mutualinformation class and derive mutual information for a given word pair as per assignment instructions. Mutual Information gets written in mutualinfo.txt
+\begin{verbatim}
+hadoop jar mi.jar mutualinformation apsrc_4k.txt wc.dat wpc.dat mutualinfo.txt
+//note that wc.dat and wpc.dat are renamed results inside the wc/ and wpc/ results
+\end{verbatim}
+
+I have attached the source files as well as sample output files (100 lines) of wc.dat,wpc.dat and mutualinfo.txt
+
+
+
+\end{itemize}
+
+\end{solution}
+\end{document}
